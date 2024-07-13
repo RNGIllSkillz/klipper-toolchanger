@@ -21,26 +21,26 @@ function preflight_checks {
     fi
 }
 
+function remove_existing_install {
+    if [ -d "${INSTALL_PATH}" ]; then
+        echo "[REMOVE] Existing installation found. Removing..."
+        rm -rf "${INSTALL_PATH}"
+        printf "[REMOVE] Existing installation removed!\n\n"
+    fi
+}
+
 function check_download {
     local installdirname installbasename
     installdirname="$(dirname ${INSTALL_PATH})"
     installbasename="$(basename ${INSTALL_PATH})"
 
-    if [ ! -d "${INSTALL_PATH}" ]; then
-        echo "[DOWNLOAD] Downloading repository..."
-        if git -C $installdirname clone -b $BRANCH_NAME https://github.com/RNGIllSkillz/klipper-toolchanger.git $installbasename; then
-            chmod +x ${INSTALL_PATH}/install.sh
-            printf "[DOWNLOAD] Download complete!\n\n"
-        else
-            echo "[ERROR] Download of git repository failed!"
-            exit -1
-        fi
+    echo "[DOWNLOAD] Downloading repository..."
+    if git -C $installdirname clone -b $BRANCH_NAME https://github.com/RNGIllSkillz/klipper-toolchanger.git $installbasename; then
+        chmod +x ${INSTALL_PATH}/install.sh
+        printf "[DOWNLOAD] Download complete!\n\n"
     else
-        echo "[DOWNLOAD] Repository already found locally. Checking out branch ${BRANCH_NAME}..."
-        git -C ${INSTALL_PATH} fetch origin
-        git -C ${INSTALL_PATH} checkout ${BRANCH_NAME}
-        git -C ${INSTALL_PATH} pull origin ${BRANCH_NAME}
-        printf "[DOWNLOAD] Branch ${BRANCH_NAME} checked out and updated!\n\n"
+        echo "[ERROR] Download of git repository failed!"
+        exit -1
     fi
 }
 
@@ -60,6 +60,7 @@ printf "======================================\n\n"
 
 # Run steps
 preflight_checks
+remove_existing_install
 check_download
 link_extension
 restart_klipper
