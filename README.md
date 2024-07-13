@@ -7,7 +7,7 @@ An assortment of Klipper extensions that I have made while working on [Tapchange
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
 
 ```
-wget -O - https://raw.githubusercontent.com/viesturz/klipper-toolchanger/main/install.sh | bash
+wget -O - https://raw.githubusercontent.com/RNGIllSkillz/klipper-toolchanger/tree/MyConfig/install.sh | bash
 ```
 
 Then, add the following to your moonraker.conf to enable automatic updates:
@@ -16,9 +16,9 @@ Then, add the following to your moonraker.conf to enable automatic updates:
 type: git_repo
 channel: dev
 path: ~/klipper-toolchanger
-origin: https://github.com/viesturz/klipper-toolchanger.git
+origin: https://github.com/RNGIllSkillz/klipper-toolchanger.git
 managed_services: klipper
-primary_branch: main
+primary_branch: MyConfig
 install_script: install.sh
 ```
 Add the [macros.cfg](/macros.cfg) to your printer config.
