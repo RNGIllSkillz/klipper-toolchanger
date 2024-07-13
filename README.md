@@ -7,7 +7,7 @@ An assortment of Klipper extensions that I have made while working on [Tapchange
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
 
 ```
-wget -O - https://raw.githubusercontent.com/RNGIllSkillz/klipper-toolchanger/tree/MyConfig/install.sh | bash
+wget -O - https://raw.githubusercontent.com/RNGIllSkillz/klipper-toolchanger/MyConfig/install.sh | bash
 ```
 
 Then, add the following to your moonraker.conf to enable automatic updates:
