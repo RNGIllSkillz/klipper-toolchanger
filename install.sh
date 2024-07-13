@@ -2,6 +2,7 @@
 
 KLIPPER_PATH="${HOME}/klipper"
 INSTALL_PATH="${HOME}/klipper-toolchanger"
+BRANCH_NAME="MyConfig"
 
 set -eu
 export LC_ALL=C
@@ -27,7 +28,7 @@ function check_download {
 
     if [ ! -d "${INSTALL_PATH}" ]; then
         echo "[DOWNLOAD] Downloading repository..."
-        if git -C $installdirname clone -b MyConfig https://github.com/RNGIllSkillz/klipper-toolchanger.git $installbasename; then
+        if git -C $installdirname clone -b $BRANCH_NAME https://github.com/RNGIllSkillz/klipper-toolchanger.git $installbasename; then
             chmod +x ${INSTALL_PATH}/install.sh
             printf "[DOWNLOAD] Download complete!\n\n"
         else
@@ -35,7 +36,11 @@ function check_download {
             exit -1
         fi
     else
-        printf "[DOWNLOAD] repository already found locally. Continuing...\n\n"
+        echo "[DOWNLOAD] Repository already found locally. Checking out branch ${BRANCH_NAME}..."
+        git -C ${INSTALL_PATH} fetch origin
+        git -C ${INSTALL_PATH} checkout ${BRANCH_NAME}
+        git -C ${INSTALL_PATH} pull origin ${BRANCH_NAME}
+        printf "[DOWNLOAD] Branch ${BRANCH_NAME} checked out and updated!\n\n"
     fi
 }
 
