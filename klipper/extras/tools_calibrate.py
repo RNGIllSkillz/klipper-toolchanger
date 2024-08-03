@@ -115,25 +115,25 @@ class ToolsCalibrate:
         return [center_x, center_y, center_z]
 
     def calculate_averages(file_path):
-    # Regular expression to match the offset lines
-    offset_pattern = re.compile(r'Tool \d+ offset is (-?\d+\.\d+),(-?\d+\.\d+),(-?\d+\.\d+)')
-    offsets = []
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        # Check if the first line contains the word "Averages"
-        if lines and lines[0].strip().startswith("Averages"):
-            lines = lines[1:]
-        for line in lines:
-            match = offset_pattern.search(line)
-            if match:
-                offsets.append(list(map(float, match.groups())))
-    if offsets:
-        num_offsets = len(offsets)
-        averages = [sum(x) / num_offsets for x in zip(*offsets)]
-        # Format the averages to the same precision as the input
-        averages_str = ','.join(f'{avg:.6f}' for avg in averages)
-        with open(file_path, 'a') as file:
-            file.write(f'Averages are {averages_str}\n')
+      # Regular expression to match the offset lines
+      offset_pattern = re.compile(r'Tool \d+ offset is (-?\d+\.\d+),(-?\d+\.\d+),(-?\d+\.\d+)')
+      offsets = []
+      with open(file_path, 'r') as file:
+          lines = file.readlines()
+          # Check if the first line contains the word "Averages"
+          if lines and lines[0].strip().startswith("Averages"):
+              lines = lines[1:]
+          for line in lines:
+              match = offset_pattern.search(line)
+              if match:
+                  offsets.append(list(map(float, match.groups())))
+      if offsets:
+          num_offsets = len(offsets)
+          averages = [sum(x) / num_offsets for x in zip(*offsets)]
+          # Format the averages to the same precision as the input
+          averages_str = ','.join(f'{avg:.6f}' for avg in averages)
+          with open(file_path, 'a') as file:
+              file.write(f'Averages are {averages_str}\n')
           
   
     cmd_TOOL_LOCATE_SENSOR_help = ("Locate the tool calibration sensor, "
