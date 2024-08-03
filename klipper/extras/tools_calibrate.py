@@ -114,7 +114,7 @@ class ToolsCalibrate:
         toolhead.set_position(position)
         return [center_x, center_y, center_z]
 
-    def calculate_averages(file_path):
+    def calculate_averages(self, file_path):
       # Regular expression to match the offset lines
       offset_pattern = re.compile(r'Tool \d+ offset is (-?\d+\.\d+),(-?\d+\.\d+),(-?\d+\.\d+)')
       offsets = []
@@ -177,7 +177,7 @@ class ToolsCalibrate:
         with open(filename, "a") as f:
             f.write("Tool {} offset is {:.6f},{:.6f},{:.6f}\n".format(
                 tool_number, *self.last_result))        
-        calculate_averages(filename)
+        self.calculate_averages(filename)
 
     cmd_TOOL_CALIBRATE_SAVE_TOOL_OFFSET_help = "Save tool offset calibration to config"
 
