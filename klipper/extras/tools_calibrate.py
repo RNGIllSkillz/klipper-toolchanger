@@ -5,6 +5,7 @@
 
 import logging
 import os
+import re
 
 direction_types = {'x+': [0, +1], 'x-': [0, -1], 'y+': [1, +1], 'y-': [1, -1],
                    'z+': [2, +1], 'z-': [2, -1]}
@@ -113,6 +114,28 @@ class ToolsCalibrate:
         toolhead.set_position(position)
         return [center_x, center_y, center_z]
 
+    def calculate_averages(file_path):
+    # Regular expression to match the offset lines
+    offset_pattern = re.compile(r'Tool \d+ offset is (-?\d+\.\d+),(-?\d+\.\d+),(-?\d+\.\d+)')
+    offsets = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        # Check if the first line contains the word "Averages"
+        if lines and lines[0].strip().startswith("Averages"):
+            lines = lines[1:]
+        for line in lines:
+            match = offset_pattern.search(line)
+            if match:
+                offsets.append(list(map(float, match.groups())))
+    if offsets:
+        num_offsets = len(offsets)
+        averages = [sum(x) / num_offsets for x in zip(*offsets)]
+        # Format the averages to the same precision as the input
+        averages_str = ','.join(f'{avg:.6f}' for avg in averages)
+        with open(file_path, 'a') as file:
+            file.write(f'Averages are {averages_str}\n')
+          
+  
     cmd_TOOL_LOCATE_SENSOR_help = ("Locate the tool calibration sensor, "
                                    "use with tool 0.")
 
@@ -141,25 +164,20 @@ class ToolsCalibrate:
     def cmd_TOOL_CALIBRATE_STORE_TOOL_OFFSET(self, gcmd):
         tool_number = gcmd.get_int('TOOL_NUMBER')
         if not self.sensor_location:
-            raise gcmd.error("No recorded sensor location, please run TOOL_LOCATE_SENSOR first")
-        
+            raise gcmd.error("No recorded sensor location, please run TOOL_LOCATE_SENSOR first")        
         location = self.locate_sensor(gcmd)
-        self.last_result = [loc - sensor_loc for loc, sensor_loc in zip(location, self.sensor_location)]
-        
+        self.last_result = [loc - sensor_loc for loc, sensor_loc in zip(location, self.sensor_location)]        
         tool_offset_info = "Tool offset for tool {} is {:.6f},{:.6f},{:.6f}".format(
             tool_number, *self.last_result)
-        self.gcode.respond_info(tool_offset_info)
-        
+        self.gcode.respond_info(tool_offset_info)        
         home_dir = os.path.expanduser("~")
-        results_dir = os.path.join(home_dir, "printer_data/config/tools_calibrate_results")
-        
-        os.makedirs(results_dir, exist_ok=True)
-        
-        filename = os.path.join(results_dir, f"tool_{tool_number}_offset.txt")
-        
+        results_dir = os.path.join(home_dir, "printer_data/config/tools_calibrate_results")        
+        os.makedirs(results_dir, exist_ok=True)        
+        filename = os.path.join(results_dir, f"tool_{tool_number}_offset.txt")        
         with open(filename, "a") as f:
             f.write("Tool {} offset is {:.6f},{:.6f},{:.6f}\n".format(
-                tool_number, *self.last_result))
+                tool_number, *self.last_result))        
+        calculate_averages(filename)
 
     cmd_TOOL_CALIBRATE_SAVE_TOOL_OFFSET_help = "Save tool offset calibration to config"
 
