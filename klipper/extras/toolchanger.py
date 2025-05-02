@@ -300,7 +300,7 @@ class Toolchanger:
             self.run_gcode('after_change_gcode',
                            tool.after_change_gcode, extra_context)
 
-        self._restore_axis(gcode_position, restore_axis, tool)
+        self._restore_axis(self.last_change_gcode_position, self.last_change_restore_axis, tool)
 
         self.gcode.run_script_from_command(
             "RESTORE_GCODE_STATE NAME=_toolchange_state MOVE=0")
